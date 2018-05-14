@@ -38,13 +38,9 @@ import logging
 import telegram
 from emoji import emojize
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from telegram import InlineKeyboardButton, KeyboardButton, \
-	InlineKeyboardMarkup, ReplyKeyboardMarkup
+from telegram import InlineKeyboardButton, KeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 
-logging.basicConfig(
-	format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-	level=logging.INFO
-	)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -92,8 +88,7 @@ class Config(object):
 				sys.exit(self._key_error_message(detail))					
 			else:
 				if not os.path.exists(config['home_path']):
-					sys.exit("OSError: home path {} doesn't exist"
-						.format(config['home_path']))
+					sys.exit("OSError: home path {} doesn't exist".format(config['home_path']))
 			try:
 				self.__user_id = config['user_id']
 			except KeyError as detail:
@@ -105,21 +100,19 @@ class Config(object):
 			config_template = ""
 
 			for key in self.__keys:
-				config_template.join('\t"{0}": "Your {} with quotes"'
-					.format(key) + (',\n' if key!=self.__keys[-1] else '')) 
+				config_template.join('\t"{0}": "Your {} with quotes"'.format(key) + 
+					(',\n' if key!=self.__keys[-1] else '')) 
 
 			config_template = "{\n" + config_template + "\n}"
 
 			with open(self.config_file, 'w') as file:
 				file.write(config_template)
 
-			sys.exit("{} doesn't exist. Created a template."
-				.format(self.config_file))
+			sys.exit("{} doesn't exist. Created a template.".format(self.config_file))
 
 	
 	def _key_error_message(self, detail):
-		return "{}: {} doesn't exist in {}.".format(type(detail).__name__, 
-			detail.args[0], self.config_file)	
+		return "{}: {} doesn't exist in {}.".format(type(detail).__name__, detail.args[0], self.config_file)	
 
 
 class Disk(object):
@@ -212,8 +205,7 @@ class Disk(object):
 				self.selected.append(os.path.join(self.path, path_name))
 			else:
 				self.selected.remove(os.path.join(self.path, path_name))
-			self.__sizeofselected = sum([self._get_size(path)
-					for path in self.selected])
+			self.__sizeofselected = sum([self._get_size(path) for path in self.selected])
 
 		elif 'up//' in key:
 			# Key 'up//' used for decrease cursor in pathlist.
@@ -250,8 +242,7 @@ class Disk(object):
 
 	def _update_path(self, value):
 		self.__path = value
-		self.__pathlist = self._sort_path_list([os.path.join(self.__path, path)  
-				for path in os.listdir(self.__path)])
+		self.__pathlist = self._sort_path_list([os.path.join(self.__path, path) for path in os.listdir(self.__path)])
 
 		self.__relpathlist = [path.split('/')[-1] for path in self.__pathlist]
 		# Clear up list of selected path whenever "__path" property changed.
@@ -300,8 +291,7 @@ def menu():
 	# 'download' button
 	button_list = [[
 		InlineKeyboardButton('...', callback_data='cd//..'), 
-		InlineKeyboardButton(icons['download'] + 'Download', 
-							callback_data='upload//')
+		InlineKeyboardButton(icons['download'] + 'Download', callback_data='upload//')
 		]]
 
 	# Start and end indexes of path list for current menu.
@@ -317,9 +307,8 @@ def menu():
 			relpath_index = str(disk.relpathlist.index(relpath))
 			button_list += [[
 				InlineKeyboardButton(
-					(icons['file'] if os.path.isfile(path) 
-						else icons['folder']) +	relpath, 
-					callback_data='cd//' + relpath_index),		
+					(icons['file'] if os.path.isfile(path) else icons['folder']) + relpath, 
+					callback_data='cd//' + relpath_index),
 				InlineKeyboardButton(
 					(icons['radio_button'] if path in disk.selected else '') + 
 						'Select' + ('ed' if path in disk.selected else ''), 
@@ -330,16 +319,14 @@ def menu():
 			# "move down" button.
 
 			button_list += [[
-			InlineKeyboardButton('...', 
-				callback_data='down//{0}'.format(menu_size)), 
+			InlineKeyboardButton('...', callback_data='down//{0}'.format(menu_size))
 			]]
 			break
 
 	# If cursor of list was changed insert a new "move up" button.
 	if disk.cursor > 0:
 		button_list.insert(1, [
-			InlineKeyboardButton('...', 
-				callback_data='up//{0}'.format(menu_size))
+			InlineKeyboardButton('...', callback_data='up//{0}'.format(menu_size))
 			])
 
 	reply_markup = InlineKeyboardMarkup(button_list)
@@ -353,8 +340,7 @@ def start(bot, update):
 
 	#Check user as owner:
 	if str(user_data.id) != str(config.user_id):
-		print("Unknown user {} trying intercept with a bot. Permission denied"
-			.format(user_data.username))
+		print("Unknown user {} trying intercept with a bot. Permission denied".format(user_data.username))
 		print("User data:", user_data)
 	else:
 		print("Connected owner")
@@ -363,8 +349,7 @@ def start(bot, update):
 		# Save chat id into config data.
 		config.chat_id=update.message.chat_id
 		# Send 'about' message.
-		bot.send_message(chat_id=config.chat_id, 
-						text="Browse remote file system.")
+		bot.send_message(chat_id=config.chat_id, text="Browse remote file system.")
 		
 		# Generate menu of buttons.
 		reply_markup = menu()
@@ -444,8 +429,7 @@ def upload(bot, update):
 				bot.send_document(chat_id=config.chat_id, 
 								document=open(zip_name, 'rb'))
 			else:
-				print("Can't upload file. Zipfile larger of 50 MB: {}"
-					.format(zip_size))
+				print("Can't upload file. Zipfile larger of 50 MB: {}".format(zip_size))
 		except:
 			print('Cant upload file. Maybe, zip file larger of 50 MB?')
 		finally:
@@ -453,8 +437,7 @@ def upload(bot, update):
 	
 if __name__ == '__main__':
 	# Send absolute path of config file.
-	config = Config(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-					'config.json'))
+	config = Config(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json'))
 	disk = Disk(config)
 
 	updater = Updater(token=config.token)
@@ -462,10 +445,8 @@ if __name__ == '__main__':
 
 	dispatcher.add_handler(CommandHandler('start', start))
 	# '^((?!upload//).)*$' - patern excluding "upload//"
-	dispatcher.add_handler(CallbackQueryHandler(echoPathList,
-							pattern='^((?!upload//).)*$'))
-	dispatcher.add_handler(CallbackQueryHandler(upload,
-							pattern=r'^upload//.*?'))
+	dispatcher.add_handler(	CallbackQueryHandler(echoPathList, pattern='^((?!upload//).)*$'))
+	dispatcher.add_handler(	CallbackQueryHandler(upload, pattern=r'^upload//.*?'))
 
 	# Start the Bot
 	updater.start_polling()
