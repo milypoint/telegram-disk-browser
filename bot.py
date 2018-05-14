@@ -454,7 +454,7 @@ def upload(bot, update):
 if __name__ == '__main__':
 	# Send absolute path of config file.
 	config = Config(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-								'config.json'))
+					'config.json'))
 	disk = Disk(config)
 
 	updater = Updater(token=config.token)
@@ -462,10 +462,10 @@ if __name__ == '__main__':
 
 	dispatcher.add_handler(CommandHandler('start', start))
 	# '^((?!upload//).)*$' - patern excluding "upload//"
-	dispatcher.add_handler(CallbackQueryHandler(echoPathList, 
-											pattern='^((?!upload//).)*$'))
-	dispatcher.add_handler(CallbackQueryHandler(upload, 
-											pattern=r'^upload//.*?'))
+	dispatcher.add_handler(CallbackQueryHandler(echoPathList,
+							pattern='^((?!upload//).)*$'))
+	dispatcher.add_handler(CallbackQueryHandler(upload,
+							pattern=r'^upload//.*?'))
 
 	# Start the Bot
 	updater.start_polling()
